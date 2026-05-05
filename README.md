@@ -99,9 +99,15 @@ python3 scripts/install_native_host.py --target-dir "$HOME/Documents/my-chatbot-
 Chrome's native messaging manifest does not support arbitrary environment variables, so `--target-dir` writes a small wrapper script that sets `CHATBOT_ARCHIVER_TARGET_DIR` before launching `native_host.py`.
 Without `--target-dir`, the same wrapper is still used, but it lets `native_host.py` choose the default `~/Documents/chatbot-archives/` destination.
 
-### 5. Restart Chrome
+### 5. Restart Chrome and reload the unpacked extension
 
 Quit Chrome completely (`Cmd+Q` on macOS, then re-open). Chrome only re-reads native messaging host manifests when a new connection is opened from a freshly loaded extension; a quick restart avoids confusion.
+
+Then reload the unpacked extension code:
+
+```text
+chrome-extension://<your-extension-id>/popup.html?reload=1
+```
 
 ### 6. Self-test
 
@@ -115,13 +121,15 @@ You should see `Self test passed.` and a new `SelfTest/<YYYY-MM-DD>/<bundle>/ses
 
 If Chrome shows `ERR_BLOCKED_BY_CLIENT` for the `chrome-extension://...` URL, the unpacked extension is not loaded in that Chrome profile. Go back to `chrome://extensions`, enable Developer mode, and **Load unpacked** from the cloned folder that contains `manifest.json`.
 
+If the page opens but shows `native host unavailable: Native host has exited` right after you updated the source or native host, reload the unpacked extension with `popup.html?reload=1`, then open `popup.html?selftest=1` again.
+
 If you are not sure which half is broken, run:
 
 ```bash
 python3 scripts/doctor.py
 ```
 
-It checks the extension source folder, the native messaging manifest, the host wrapper, and whether the expected extension ID is actually loaded in the checked Chrome profile. It prints only sanitized extension/profile fields.
+It checks the extension source folder, the native messaging manifest, and the host wrapper. It also prints an advisory persisted-profile check, but the self-test URL is the authority for the live Chrome extension because Chrome does not always flush unpacked extension state to `Preferences` immediately.
 
 ## Use
 

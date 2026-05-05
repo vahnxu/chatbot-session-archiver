@@ -81,7 +81,7 @@ def test_doctor_passes_when_extension_loaded() -> None:
         result = run_doctor(manifest_dir, profile_root, wrapper)
 
         assert result.returncode == 0, result.stdout + result.stderr
-        assert "OK: Local install is usable" in result.stdout
+        assert "OK: Native host install is usable" in result.stdout
 
 
 def test_doctor_fails_when_extension_only_pinned() -> None:
@@ -97,12 +97,13 @@ def test_doctor_fails_when_extension_only_pinned() -> None:
 
         result = run_doctor(manifest_dir, profile_root, wrapper)
 
-        assert result.returncode == 1, result.stdout + result.stderr
+        assert result.returncode == 0, result.stdout + result.stderr
         assert "only pinned as stale toolbar state" in result.stdout
         assert "Load unpacked" in result.stdout
+        assert "Native host install is usable" in result.stdout
 
 
 if __name__ == "__main__":
     test_doctor_passes_when_extension_loaded()
     test_doctor_fails_when_extension_only_pinned()
-    print("PASS: doctor detects loaded extension and stale pinned-only state")
+    print("PASS: doctor detects loaded extension and warns on stale pinned-only state")

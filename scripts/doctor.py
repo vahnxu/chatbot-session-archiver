@@ -58,6 +58,10 @@ def status(ok: bool, label: str) -> None:
     print(f"{marker}: {label}")
 
 
+def warn(label: str) -> None:
+    print(f"WARN: {label}")
+
+
 def read_json(path: Path) -> dict | None:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -244,17 +248,19 @@ def check_chrome_profile(profile_root: Path, repo_root: Path, extension_id: str)
 
     stale = [record["profile"] for record in records if record["pinned"]]
     if stale:
-        status(False, f"extension ID is only pinned as stale toolbar state in profiles: {', '.join(stale)}")
+        warn(f"extension ID is only pinned as stale toolbar state in persisted profiles: {', '.join(stale)}")
     else:
-        status(False, f"extension ID {extension_id} is not loaded in any checked Chrome profile")
+        warn(f"extension ID {extension_id} was not found in persisted Chrome profile settings")
 
     print("")
-    print("Fix:")
+    print("Live Chrome profile check is advisory: Chrome may not flush unpacked extension state to Preferences immediately.")
+    print("If the self-test URL does not open or the extension is absent in chrome://extensions:")
     print("1. Open chrome://extensions in the Chrome profile you actually use.")
     print("2. Enable Developer mode.")
     print(f"3. Click Load unpacked and select: {repo_root}")
     print(f"4. Confirm the extension ID is: {extension_id}")
-    print("5. Quit and reopen Chrome, then rerun this doctor.")
+    print(f"5. Open chrome-extension://{extension_id}/popup.html?reload=1")
+    print(f"6. Open chrome-extension://{extension_id}/popup.html?selftest=1")
     return False
 
 
@@ -276,11 +282,11 @@ def main() -> int:
     source_ok = check_extension_source(repo_root)
     manifest_ok, wrapper = check_native_manifest(manifest_dir, args.extension_id)
     wrapper_ok = True if args.skip_wrapper_smoke or not wrapper else smoke_wrapper(wrapper)
-    profile_ok = check_chrome_profile(profile_root, repo_root, args.extension_id)
+    check_chrome_profile(profile_root, repo_root, args.extension_id)
 
-    all_ok = source_ok and manifest_ok and wrapper_ok and profile_ok
+    all_ok = source_ok and manifest_ok and wrapper_ok
     print("")
-    status(all_ok, "Local install is usable")
+    status(all_ok, "Native host install is usable; use the self-test URL to verify the live Chrome extension")
     return 0 if all_ok else 1
 
 
