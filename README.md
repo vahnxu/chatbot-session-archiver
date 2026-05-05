@@ -10,11 +10,17 @@ You click the toolbar icon → the active chatbot conversation is written as `se
 
 The author's actual workflow:
 
-- **Save a chatbot session locally**, then **import it into another chatbot to keep talking** (e.g. start in Gemini for visual reasoning, continue in Claude for writing).
+- **Save a chatbot session locally**, then **import it into another chatbot for a second opinion**. For example, keep a ChatGPT conversation as files, then ask Claude to analyze that prior discussion and propose a different plan.
 - **Save a chatbot session locally**, then **hand it to Codex / Claude Code as context** so a coding agent can resume what a chat agent started.
 - **Keep an archive that survives** when the chatbot UI changes, when an account is closed, or when a "shared link" stops working.
 
 If your goal is to *keep your own chatbot conversations as files you control*, this is for you. If your goal is to scrape someone else's data or to bulk-extract conversations automatically, **this is not for you** — see [Scope and red lines](#scope-and-red-lines).
+
+## Why not just use the platform's full export?
+
+Most AI platforms provide an account-level export or backup. That is useful for periodic full backups, but it is heavy when you only need one conversation right now.
+
+This tool saves the **current session on demand**. You can archive a single conversation, hand it to another chatbot or local agent, and keep working without repeatedly exporting your whole account. It is meant for flexible, incremental saves; it does not replace official full-account exports when you need a complete backup.
 
 ## What gets saved
 
