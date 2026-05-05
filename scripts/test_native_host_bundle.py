@@ -166,13 +166,27 @@ def run_legacy_save_markdown(target_dir: Path) -> None:
 
 
 def run_path_traversal_guard(target_dir: Path) -> None:
+    dotted = assert_ok(
+        "startBundle dotted-title",
+        call_host(
+            target_dir,
+            {
+                "type": "startBundle",
+                "relativeDir": "Claude/2099-12-31/20991231T000000Z_claude_title-with...dots",
+            },
+        ),
+    )
+    dotted_path = target_dir / dotted["relativeDir"]
+    if not dotted_path.is_dir():
+        raise AssertionError(f"dotted relativeDir was not created: {dotted_path}")
+
     response = call_host(
         target_dir,
         {"type": "startBundle", "relativeDir": "../escape"},
     )
     if response.get("ok"):
         raise AssertionError(f"startBundle should reject ../escape but got: {response}")
-    if "stay inside" not in (response.get("error") or ""):
+    if "invalid folder name" not in (response.get("error") or ""):
         raise AssertionError(f"unexpected error message: {response}")
 
 
@@ -184,7 +198,7 @@ def main() -> int:
         run_path_traversal_guard(target)
     print("PASS: bundle protocol startBundle/writeAttachmentChunk/completeAttachment/finishBundle")
     print("PASS: legacy saveMarkdown still works")
-    print("PASS: path-traversal guard rejects ../escape")
+    print("PASS: path-traversal guard allows dotted titles and rejects ../escape")
     return 0
 
 

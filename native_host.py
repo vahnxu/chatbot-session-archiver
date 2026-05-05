@@ -218,7 +218,7 @@ def handle_finish_bundle(request: dict) -> dict:
 def validate_filename(value: object) -> str:
     if not isinstance(value, str):
         raise ValueError("filename must be a string")
-    if "/" in value or "\\" in value or ".." in value:
+    if "/" in value or "\\" in value or value in ("", ".", ".."):
         raise ValueError("filename must not contain path traversal")
     if len(value) > 180:
         raise ValueError("filename is too long")
@@ -230,7 +230,7 @@ def validate_filename(value: object) -> str:
 def validate_relative_path(value: object) -> Path:
     if not isinstance(value, str):
         raise ValueError("relativePath must be a string")
-    if value.startswith("/") or "\\" in value or "\x00" in value or ".." in value:
+    if value.startswith("/") or "\\" in value or "\x00" in value:
         raise ValueError("relativePath must stay inside the archive directory")
     if len(value) > 260:
         raise ValueError("relativePath is too long")
@@ -250,7 +250,7 @@ def validate_relative_path(value: object) -> Path:
 def validate_relative_dir(value: object) -> Path:
     if not isinstance(value, str):
         raise ValueError("relativeDir must be a string")
-    if value.startswith("/") or "\\" in value or "\x00" in value or ".." in value:
+    if value.startswith("/") or "\\" in value or "\x00" in value:
         raise ValueError("relativeDir must stay inside the archive directory")
     if len(value) > 260:
         raise ValueError("relativeDir is too long")
@@ -267,7 +267,7 @@ def validate_relative_dir(value: object) -> Path:
 def validate_attachment_path(value: object, *, allow_part: bool) -> Path:
     if not isinstance(value, str):
         raise ValueError("attachmentPath must be a string")
-    if value.startswith("/") or "\\" in value or "\x00" in value or ".." in value:
+    if value.startswith("/") or "\\" in value or "\x00" in value:
         raise ValueError("attachmentPath must stay inside the session directory")
     if len(value) > 220:
         raise ValueError("attachmentPath is too long")

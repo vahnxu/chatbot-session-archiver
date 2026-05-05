@@ -178,7 +178,7 @@ node --check background.js content.js popup.js
 
 `verify_no_network.sh` is a static check: it greps the source tree for analytics APIs, fixed remote endpoints, the Chrome `downloads` permission, `default_popup`, and any `_`-prefixed file (Chrome refuses to load extensions with `_*` entries).
 
-`check_release_safety.py` scans tracked text files for local home-directory paths, common token formats, private-key blocks, and tracked secret-looking files before public release.
+`check_release_safety.py` scans tracked text files for local home-directory paths, common token formats, private-key blocks, tracked secret-looking files, and Python syntax errors before public release. It parses Python with `ast` instead of `py_compile`, so it does not create `__pycache__` directories that would break Chrome's unpacked-extension loader.
 
 `test_native_host_bundle.py` drives `native_host.py` end to end over stdio the way Chrome does, against a temp directory. It validates the full bundle protocol, the legacy `saveMarkdown` path, and the path-traversal guard.
 

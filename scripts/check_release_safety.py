@@ -8,6 +8,7 @@ or tracked secret-looking files.
 
 from __future__ import annotations
 
+import ast
 import re
 import subprocess
 import sys
@@ -67,6 +68,12 @@ def main() -> int:
             continue
 
         text = path.read_text(encoding="utf-8", errors="replace")
+        if path.suffix.lower() == ".py":
+            try:
+                ast.parse(text, filename=str(rel))
+            except SyntaxError as exc:
+                findings.append(f"{rel}:{exc.lineno or 1}: Python syntax error: {exc.msg}")
+
         for line_no, line in enumerate(text.splitlines(), start=1):
             for label, pattern in PATTERNS:
                 if pattern.search(line):
@@ -78,7 +85,7 @@ def main() -> int:
             print(finding, file=sys.stderr)
         return 1
 
-    print("PASS: release safety scan found no local paths, common secrets, or tracked secret-looking files")
+    print("PASS: release safety scan found no local paths, common secrets, tracked secret-looking files, or Python syntax errors")
     return 0
 
 
