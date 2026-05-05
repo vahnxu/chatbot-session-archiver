@@ -33,6 +33,16 @@ For each captured session you get a folder like:
 
 `session.md` is intended to be opened by a human or pasted into another chat. `session.json` is intended to be ingested by another agent (Codex, Claude Code, custom pipelines) without HTML scraping.
 
+### Attachments and images
+
+The extension attempts to save images and file attachments that the chatbot page exposes to the browser, including `data:`, `blob:`, and normal `http(s)` sources. Every attachment record is also written to `attachments/manifest.json` with one of three statuses:
+
+- `saved`: the file was written under `attachments/`.
+- `skipped`: the page showed an attachment name or chip, but did not expose a downloadable source.
+- `failed`: the page exposed a source, but the browser could not fetch it or the file exceeded the safety limit.
+
+Some chatbot platforms intentionally hide uploaded files behind internal APIs or only render a filename. In those cases this tool records the visible metadata and the reason, but it cannot reconstruct the original local file.
+
 ### Supported chatbots
 
 ChatGPT, Claude, Gemini, DeepSeek, Kimi, Doubao, Perplexity, Grok, Qianwen, Poe, Copilot, Mistral. A generic fallback runs on any other page.
@@ -48,6 +58,8 @@ A platform's DOM can change at any time. When that happens, capture quality drop
 There is no remote server, no telemetry, and no analytics. See `scripts/verify_no_network.sh`.
 
 ## Install
+
+This is not a one-click Chrome Web Store install. You load the unpacked extension from the source folder, then run the native host installer once so Chrome can write bundles to your local archive directory.
 
 ### 0. Prerequisites
 
@@ -136,7 +148,7 @@ It checks the extension source folder, the native messaging manifest, and the ho
 ## Use
 
 1. Open a chatbot conversation page.
-2. **Scroll to the top of the conversation** if it lazy-loads — Gemini and similar UIs only render messages once you scroll past them. The extension can only see what the page has rendered.
+2. For long conversations, scroll to the earliest message first so the page loads the full history. The extension can only save content that the webpage has already rendered.
 3. Click the extension icon in the toolbar.
 4. A green toast appears on success showing the relative path of the saved bundle. A red toast appears on failure.
 

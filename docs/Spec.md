@@ -10,6 +10,7 @@ Authoritative spec for the project. The README is the user-facing entry point; t
   - `session.md` — human-readable transcript with YAML frontmatter
   - `session.json` — machine-readable structured payload for other agents (Codex, Claude Code, custom pipelines)
 - Save **page-exposed attachments** alongside the transcript when the page exposes a fetchable URL/blob/data source.
+- Record every attachment outcome in `attachments/manifest.json`: `saved` when a file is written, `skipped` when the page exposes only metadata such as a filename/chip, and `failed` when a source exists but cannot be fetched or is over the safety limit.
 - Stay **offline-first**. No analytics. No fixed remote endpoint. No background activity unless the user clicks.
 - Stay **resumable**: the saved bundle should be enough for the user to either paste into another chatbot to keep talking, or hand to a coding agent for follow-up work.
 
@@ -216,9 +217,10 @@ For each match the script computes a wider **attachment scope** (`closest('[data
 
 ### Known limitations
 
-- Lazy-loaded conversations: messages above the current scroll position may not be in the DOM. The user should scroll to the very top before saving.
+- Long conversations: messages above the current scroll position may not be in the DOM yet. The user should scroll to the earliest message before saving so the page has loaded the full history.
 - Thinking summaries: some platforms (Claude) render a collapsed-summary line that duplicates the first sentence of the body. `collapseInternalRepeats()` collapses adjacent repeated lines and `removeContainerDuplicates()` drops nested fragments by DOM containment.
 - Pages that expose attachments only as filenames or chips with no fetchable URL/blob: the bundle records the metadata as `kind: "filename"` or `kind: "visible-attachment"` and marks them `skipped`.
+- Platform-hidden uploads: some chatbot platforms keep uploaded files behind internal APIs and render only a visible file card. The archiver must not pretend to reconstruct those files; it records the platform-visible metadata and the skip reason.
 - DOM is not a stable API. A platform redesign breaks selectors with no warning. Mitigation is fast manual repair, not a contract.
 
 ## 7. Install / upgrade / rollback

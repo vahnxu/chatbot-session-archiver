@@ -33,6 +33,16 @@
 
 `session.md` 适合人阅读，或复制到另一个 chatbot。`session.json` 适合交给 Codex、Claude Code 或你自己的脚本处理。
 
+### 附件和图片
+
+扩展会尽量保存 chatbot 页面已经暴露给浏览器的图片和文件附件，包括 `data:`、`blob:` 和普通 `http(s)` 来源。每条附件记录都会写入 `attachments/manifest.json`，并标注状态：
+
+- `saved`：文件已保存到 `attachments/` 目录。
+- `skipped`：页面只显示了附件名或附件卡片，但没有暴露可下载来源。
+- `failed`：页面暴露了来源，但浏览器无法获取，或文件超过安全大小限制。
+
+有些 chatbot 平台会把用户上传文件藏在内部接口后面，页面上只显示文件名。这种情况下，本工具会记录可见的文件名和不能保存的原因，但无法还原原始本地文件。
+
 ### 支持的 chatbot
 
 ChatGPT、Claude、Gemini、DeepSeek、Kimi、Doubao、Perplexity、Grok、Qianwen、Poe、Copilot、Mistral。其他页面会走通用 fallback。
@@ -48,6 +58,8 @@ ChatGPT、Claude、Gemini、DeepSeek、Kimi、Doubao、Perplexity、Grok、Qianw
 项目没有远程服务器、没有遥测、没有分析统计。可以运行 `scripts/verify_no_network.sh` 做静态检查。
 
 ## 安装
+
+这不是 Chrome Web Store 的一键安装插件。你需要先从源码目录加载 unpacked extension，再运行一次 native host installer，让 Chrome 可以把会话 bundle 写到你的本地归档目录。
 
 ### 0. 前置条件
 
@@ -143,7 +155,7 @@ python3 scripts/doctor.py
 ## 使用
 
 1. 打开一个 chatbot 对话页面。
-2. 如果该平台会懒加载历史消息，先滚动到对话顶部。扩展只能保存页面已经渲染出来的内容。
+2. 如果对话很长，先向上滚动到最早的消息，确保历史消息都已经显示出来。扩展只能保存当前网页已经加载出来的内容。
 3. 点击浏览器工具栏里的扩展图标。
 4. 成功时会出现绿色 toast，显示保存路径；失败时会出现红色 toast。
 
