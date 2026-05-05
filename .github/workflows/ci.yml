@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Static privacy and manifest checks
+        run: bash scripts/verify_no_network.sh
+      - name: Release safety scan
+        run: python3 scripts/check_release_safety.py
+      - name: Native host protocol test
+        run: python3 scripts/test_native_host_bundle.py
+      - name: Native host installer test
+        run: python3 scripts/test_install_native_host.py
+      - name: JavaScript syntax
+        run: |
+          node --check background.js
+          node --check content.js
+          node --check popup.js
+      - name: Python syntax
+        run: |
+          python3 -c "import ast, pathlib; ast.parse(pathlib.Path('native_host.py').read_text())"
+          python3 -c "import ast, pathlib; ast.parse(pathlib.Path('scripts/install_native_host.py').read_text())"
+          python3 -c "import ast, pathlib; ast.parse(pathlib.Path('scripts/test_install_native_host.py').read_text())"
+          python3 -c "import ast, pathlib; ast.parse(pathlib.Path('scripts/check_release_safety.py').read_text())"
