@@ -1,5 +1,7 @@
 # Local Chatbot Session Archiver
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Unpacked Chrome extension for **manual, local-only export of the current AI chatbot conversation** (text + exposed attachments) to a folder on your own machine.
 
 You click the toolbar icon → the active chatbot conversation is written as `session.md` + `session.json` + the page-exposed attachments to a local folder. No popup. No cloud. No analytics.
