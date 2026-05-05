@@ -173,8 +173,10 @@ def main() -> int:
     write_text_safely(manifest_path, manifest_text, 0o644)
     print("")
     print("Next steps:")
-    print("1. Quit and reopen Chrome.")
-    print(f"2. Open chrome-extension://{args.extension_id}/popup.html?selftest=1")
+    print("1. Load this folder in chrome://extensions if it is not already loaded.")
+    print("2. Quit and reopen Chrome.")
+    print(f"3. Open chrome-extension://{args.extension_id}/popup.html?selftest=1")
+    print("4. If the self-test URL does not open, run: python3 scripts/doctor.py")
     return 0
 
 

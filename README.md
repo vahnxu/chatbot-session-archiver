@@ -115,6 +115,14 @@ You should see `Self test passed.` and a new `SelfTest/<YYYY-MM-DD>/<bundle>/ses
 
 If Chrome shows `ERR_BLOCKED_BY_CLIENT` for the `chrome-extension://...` URL, the unpacked extension is not loaded in that Chrome profile. Go back to `chrome://extensions`, enable Developer mode, and **Load unpacked** from the cloned folder that contains `manifest.json`.
 
+If you are not sure which half is broken, run:
+
+```bash
+python3 scripts/doctor.py
+```
+
+It checks the extension source folder, the native messaging manifest, the host wrapper, and whether the expected extension ID is actually loaded in the checked Chrome profile. It prints only sanitized extension/profile fields.
+
 ## Use
 
 1. Open a chatbot conversation page.
@@ -152,8 +160,10 @@ Run from the extension directory:
 ```bash
 bash scripts/verify_no_network.sh
 python3 scripts/check_release_safety.py
+python3 scripts/doctor.py
 python3 scripts/test_native_host_bundle.py
 python3 scripts/test_install_native_host.py
+python3 scripts/test_doctor.py
 python3 scripts/install_native_host.py --dry-run
 node --check background.js content.js popup.js
 ```
