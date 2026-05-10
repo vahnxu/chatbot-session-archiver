@@ -55,6 +55,13 @@ ChatGPT、Claude、Gemini、DeepSeek、Kimi、Doubao、Perplexity、Grok、Qianw
 
 各个平台的网页 DOM 可能随时变化。DOM 变化后，该平台的保存质量可能下降，直到选择器更新。平台识别和选择器规则见 [docs/Spec.md](docs/Spec.md)。
 
+### 浏览器兼容性
+
+本扩展是标准 Manifest V3 Chrome 扩展，在任何支持 Native Messaging 的 Chromium 浏览器都能跑。
+
+- **Chrome / Chromium / Brave / Edge** —— 完整支持。装 native host：`python3 scripts/install_native_host.py [--browser <name>]`。
+- **ChatGPT Atlas**（OpenAI 出的 Chromium 衍生浏览器，仅 macOS）—— Atlas 从自己独立的目录读 native messaging manifest，需要用 `python3 scripts/install_native_host.py --browser atlas` 注册。**重要提示**：Atlas 在 `chatgpt.com` 上**主动屏蔽第三方扩展**（AdGuard、Tampermonkey 等同样被屏）。本扩展在 Atlas 上能正常归档 Claude / Gemini / DeepSeek / Kimi / Doubao 会话，但**归档 `chatgpt.com` 上的 ChatGPT 会话请用普通 Chrome / Brave / Edge** —— 这是 Atlas 的产品策略，扩展层面无法绕开。
+
 ## 工作原理
 
 1. **Chrome extension** 只在你点击工具栏按钮时读取当前活动标签页中已经渲染出来的对话 DOM。

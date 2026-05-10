@@ -55,6 +55,13 @@ ChatGPT, Claude, Gemini, DeepSeek, Kimi, Doubao, Perplexity, Grok, Qianwen, Poe,
 
 A platform's DOM can change at any time. When that happens, capture quality drops on that platform until the selectors are updated. See [docs/Spec.md](docs/Spec.md) for how the platform list and selectors are organized.
 
+### Browser compatibility
+
+This extension is a standard Manifest V3 Chrome extension and works in any Chromium-based browser that supports Native Messaging.
+
+- **Chrome / Chromium / Brave / Edge** — full support. Install the native host with `python3 scripts/install_native_host.py [--browser <name>]`.
+- **ChatGPT Atlas** (OpenAI's Chromium-based browser, macOS only) — Atlas reads native-messaging manifests from its own per-browser directory, so register the host with `python3 scripts/install_native_host.py --browser atlas`. **Caveat**: Atlas actively blocks third-party extensions on `chatgpt.com` (the same policy that blocks AdGuard, Tampermonkey, etc.). This extension can still archive Claude / Gemini / DeepSeek / Kimi / Doubao sessions in Atlas, but **for ChatGPT sessions on `chatgpt.com` you must use a regular Chrome / Brave / Edge install** — Atlas's block is a product policy, not something the extension can work around.
+
 ## How it works
 
 1. **Extension** (Chrome MV3 service worker + content script) reads the visible DOM of the active tab and infers messages + attachment references.
