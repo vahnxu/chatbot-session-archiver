@@ -53,7 +53,9 @@ For macOS and Linux, prefer the installer:
 python3 scripts/install_native_host.py
 ```
 
-Use `--browser chromium`, `--browser brave`, or `--browser edge` for those Chromium-based browsers. Use `--extension-id <id>` if your loaded extension ID differs from `jomoepphgememdnpipkhojpjmkjeehdl`.
+Use `--browser chromium`, `--browser brave`, `--browser edge`, or `--browser atlas` (macOS only; ChatGPT Atlas browser) for those Chromium-based browsers. Use `--extension-id <id>` if your loaded extension ID differs from `jomoepphgememdnpipkhojpjmkjeehdl`.
+
+**ChatGPT Atlas note**: Atlas is a Chromium-based browser from OpenAI; it loads MV3 extensions normally but reads native-messaging host manifests from its **own** directory (`~/Library/Application Support/OpenAI/ChatGPT Atlas/NativeMessagingHosts/`), not Chrome's. If you have the extension installed in both Chrome and Atlas, run the installer once per browser.
 
 ### Customizing the archive directory
 

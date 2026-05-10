@@ -106,7 +106,7 @@ If your browser assigned a different extension ID, pass it explicitly:
 python3 scripts/install_native_host.py --extension-id <id-from-chrome-extensions>
 ```
 
-For Chromium, Brave, Edge, manual JSON contents, and background, see [docs/NativeMessaging.md](docs/NativeMessaging.md).
+For Chromium, Brave, Edge, ChatGPT Atlas (`--browser atlas`, macOS only), manual JSON contents, and background, see [docs/NativeMessaging.md](docs/NativeMessaging.md).
 
 ### 4. Pick where archives should land (optional)
 

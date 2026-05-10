@@ -106,7 +106,7 @@ python3 scripts/install_native_host.py
 python3 scripts/install_native_host.py --extension-id <chrome-extensions-page里的ID>
 ```
 
-Chromium、Brave、Edge 和手动 manifest 配置见 [docs/NativeMessaging.md](docs/NativeMessaging.md)。
+Chromium、Brave、Edge、ChatGPT Atlas（`--browser atlas`，仅 macOS）和手动 manifest 配置见 [docs/NativeMessaging.md](docs/NativeMessaging.md)。
 
 ### 4. 自定义保存目录，可选
 

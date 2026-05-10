@@ -30,6 +30,7 @@ def chrome_manifest_dir(browser: str) -> Path:
             "chromium": home / "Library/Application Support/Chromium/NativeMessagingHosts",
             "brave": home / "Library/Application Support/BraveSoftware/Brave-Browser/NativeMessagingHosts",
             "edge": home / "Library/Application Support/Microsoft Edge/NativeMessagingHosts",
+            "atlas": home / "Library/Application Support/OpenAI/ChatGPT Atlas/NativeMessagingHosts",
         }
     elif system == "Linux":
         roots = {
@@ -122,7 +123,7 @@ def main() -> int:
     parser.add_argument(
         "--browser",
         default="chrome",
-        help="Browser manifest location to use: chrome, chromium, brave, or edge.",
+        help="Browser manifest location to use: chrome, chromium, brave, edge, or atlas (macOS only; ChatGPT Atlas).",
     )
     parser.add_argument(
         "--extension-id",
