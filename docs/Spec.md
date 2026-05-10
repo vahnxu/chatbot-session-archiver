@@ -242,7 +242,7 @@ See README.md §Install. Summary:
 ### Rollback
 
 1. `Remove` the extension from `chrome://extensions`.
-2. Delete `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.chatbotarchiver.host.json` (or the equivalent on your OS).
+2. Delete `com.chatbotarchiver.host.json` from your browser's NativeMessagingHosts directory. The exact path depends on the browser (`scripts/install_native_host.py --browser <name> --dry-run` prints the location). Defaults: Chrome `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/`, ChatGPT Atlas `~/Library/Application Support/OpenAI/ChatGPT Atlas/NativeMessagingHosts/`, plus Chromium/Brave/Edge analogues; see `docs/NativeMessaging.md` for the full table.
 3. Optionally delete the archive directory.
 
 ## 8. Testing matrix
