@@ -191,6 +191,17 @@
     const directRole = element.getAttribute("data-message-author-role");
     if (directRole) return normalizeRole(directRole);
 
+    // Turn-level containers (e.g. ChatGPT <article>) often survive dedup in
+    // place of the inner role-tagged element. When every role-tagged
+    // descendant agrees, inherit that role instead of guessing from class
+    // names, which mislabels user turns as assistant.
+    const descendantRoles = Array.from(
+      element.querySelectorAll("[data-message-author-role]")
+    ).map(el => el.getAttribute("data-message-author-role"));
+    if (descendantRoles.length && descendantRoles.every(r => r === descendantRoles[0])) {
+      return normalizeRole(descendantRoles[0]);
+    }
+
     const tag = element.tagName.toLowerCase();
     if (tag === "user-query") return "user";
     if (tag === "model-response") return "assistant";

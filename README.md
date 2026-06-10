@@ -113,6 +113,12 @@ If your browser assigned a different extension ID, pass it explicitly:
 python3 scripts/install_native_host.py --extension-id <id-from-chrome-extensions>
 ```
 
+If your Chrome instance runs with a custom `--user-data-dir` (a debug or testing profile), it looks up native messaging manifests under `<user-data-dir>/NativeMessagingHosts` instead of the default browser location. Point the installer there explicitly:
+
+```bash
+python3 scripts/install_native_host.py --manifest-dir "<user-data-dir>/NativeMessagingHosts"
+```
+
 For Chromium, Brave, Edge, ChatGPT Atlas (`--browser atlas`, macOS only), manual JSON contents, and background, see [docs/NativeMessaging.md](docs/NativeMessaging.md).
 
 ### 4. Pick where archives should land (optional)

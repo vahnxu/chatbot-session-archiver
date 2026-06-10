@@ -126,6 +126,16 @@ def main() -> int:
         help="Browser manifest location to use: chrome, chromium, brave, edge, or atlas (macOS only; ChatGPT Atlas).",
     )
     parser.add_argument(
+        "--manifest-dir",
+        help=(
+            "Explicit NativeMessagingHosts directory to write the manifest into. "
+            "Overrides --browser. Needed for Chrome instances launched with a custom "
+            "--user-data-dir (e.g. a debug profile), which look up native messaging "
+            "manifests under <user-data-dir>/NativeMessagingHosts instead of the "
+            "default browser location."
+        ),
+    )
+    parser.add_argument(
         "--extension-id",
         default=DEFAULT_EXTENSION_ID,
         help="Chrome extension ID from chrome://extensions.",
@@ -147,7 +157,10 @@ def main() -> int:
         raise SystemExit(f"native_host.py not found: {host_path}")
 
     host_path.chmod(host_path.stat().st_mode | stat.S_IXUSR)
-    manifest_dir = chrome_manifest_dir(args.browser)
+    if args.manifest_dir:
+        manifest_dir = Path(args.manifest_dir).expanduser()
+    else:
+        manifest_dir = chrome_manifest_dir(args.browser)
     manifest_path = manifest_dir / f"{HOST_NAME}.json"
 
     python_executable = str(Path(sys.executable).resolve())

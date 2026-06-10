@@ -113,6 +113,12 @@ python3 scripts/install_native_host.py
 python3 scripts/install_native_host.py --extension-id <chrome-extensions-page里的ID>
 ```
 
+如果你的 Chrome 实例使用自定义 `--user-data-dir`（如调试/测试 profile），它会从 `<user-data-dir>/NativeMessagingHosts` 读取 native messaging manifest，而不是默认浏览器目录。用 `--manifest-dir` 显式指定：
+
+```bash
+python3 scripts/install_native_host.py --manifest-dir "<user-data-dir>/NativeMessagingHosts"
+```
+
 Chromium、Brave、Edge、ChatGPT Atlas（`--browser atlas`，仅 macOS）和手动 manifest 配置见 [docs/NativeMessaging.md](docs/NativeMessaging.md)。
 
 ### 4. 自定义保存目录，可选
