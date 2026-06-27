@@ -51,7 +51,7 @@ Some chatbot platforms intentionally hide uploaded files behind internal APIs or
 
 ### Supported chatbots
 
-ChatGPT, Claude, Gemini, DeepSeek, Kimi, Doubao, Perplexity, Grok, Qianwen, Poe, Copilot, Mistral. A generic fallback runs on any other page.
+ChatGPT, Claude, Gemini, Google AI Mode (Google Search's AI Mode, `udm=50`), DeepSeek, Kimi, Doubao, Perplexity, Grok, Qianwen, Poe, Copilot, Mistral. A generic fallback runs on any other page.
 
 A platform's DOM can change at any time. When that happens, capture quality drops on that platform until the selectors are updated. See [docs/Spec.md](docs/Spec.md) for how the platform list and selectors are organized.
 

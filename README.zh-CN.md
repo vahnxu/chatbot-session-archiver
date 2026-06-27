@@ -51,7 +51,7 @@
 
 ### 支持的 chatbot
 
-ChatGPT、Claude、Gemini、DeepSeek、Kimi、Doubao、Perplexity、Grok、Qianwen、Poe、Copilot、Mistral。其他页面会走通用 fallback。
+ChatGPT、Claude、Gemini、Google AI Mode（Google 搜索的 AI Mode，`udm=50`）、DeepSeek、Kimi、Doubao、Perplexity、Grok、Qianwen、Poe、Copilot、Mistral。其他页面会走通用 fallback。
 
 各个平台的网页 DOM 可能随时变化。DOM 变化后，该平台的保存质量可能下降，直到选择器更新。平台识别和选择器规则见 [docs/Spec.md](docs/Spec.md)。
 

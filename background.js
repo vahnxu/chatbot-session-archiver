@@ -525,6 +525,7 @@ function platformFolderName(platformId, platformName) {
     chatgpt: "ChatGPT",
     claude: "Claude",
     gemini: "Gemini",
+    "google-ai-mode": "Google-AI-Mode",
     deepseek: "DeepSeek",
     kimi: "Kimi",
     doubao: "Doubao",

@@ -1,7 +1,7 @@
 (async () => {
   try {
     const platform = detectPlatform();
-    const title = getTitle();
+    const title = getTitle(platform);
     const url = location.href;
     const capturedAt = new Date().toISOString();
     const candidates = collectMessageCandidates(platform);
@@ -31,6 +31,13 @@
 
   function detectPlatform() {
     const host = location.hostname;
+    // Google AI Mode lives on the normal Search host (www.google.com), so it
+    // cannot be matched by hostname alone — that would also swallow ordinary
+    // search. Gate on the AI Mode query param (udm=50), with the rendered AI
+    // container as a secondary signal, and check it before the host rules.
+    if (isGoogleAiMode(host)) {
+      return { id: "google-ai-mode", name: "Google AI Mode", host };
+    }
     const rules = [
       ["chatgpt", "ChatGPT", ["chatgpt.com", "chat.openai.com"]],
       ["claude", "Claude", ["claude.ai"]],
@@ -49,14 +56,45 @@
     return found ? { id: found[0], name: found[1], host } : { id: "generic", name: "Generic Chatbot", host };
   }
 
-  function getTitle() {
+  function isGoogleAiMode(host) {
+    // Restrict to Google Search hosts (www.google.com / google.com / country
+    // TLDs like google.co.jp). Subdomain products such as gemini.google.com are
+    // excluded so they keep routing to their own platform rule.
+    const isGoogleSearchHost = /^(www\.)?google\.[a-z]{2,}(\.[a-z]{2,})?$/.test(host);
+    if (!isGoogleSearchHost) return false;
+    const params = new URLSearchParams(location.search);
+    if (params.get("udm") === "50") return true;
+    return Boolean(document.querySelector('[data-subtree="aimc"]'));
+  }
+
+  function getTitle(platform) {
+    // Google AI Mode has no clean conversation heading (the first <h1> is often
+    // hidden chrome), so derive the title from the search query instead.
+    if (platform?.id === "google-ai-mode") {
+      const query = new URLSearchParams(location.search).get("q");
+      if (query) return cleanText(query).slice(0, 180);
+    }
     const heading = textOf(document.querySelector("main h1, h1"));
     const raw = heading || document.title || "Untitled Chatbot Session";
     return cleanText(raw).replace(/\s+[-|].*$/, "").slice(0, 180);
   }
 
+  // Google AI Mode renders its turns inside the Search results page, so the
+  // generic selector list would pull in search chrome (tabs, "People also
+  // ask", related searches). Use a dedicated, narrow pair instead:
+  //   - user turns:  div.tbIZh.wQN2Jd.Odbbif  (the "You said:" bubble)
+  //   - AI answers:  [data-subtree="aimc"]    (the answer body)
+  // data-subtree is a semantic attribute and the most stable anchor; the
+  // user-bubble utility classes are Google-internal and may need updating if
+  // the AI Mode DOM is redesigned.
+  const GOOGLE_AI_MODE_SELECTORS = [
+    "div.tbIZh.wQN2Jd.Odbbif",
+    "[data-subtree='aimc']"
+  ];
+
   function collectMessageCandidates(platform) {
-    const selectors = [
+    const isAiMode = platform.id === "google-ai-mode";
+    const selectors = isAiMode ? GOOGLE_AI_MODE_SELECTORS : [
       "[data-message-author-role]",
       "[data-testid*='conversation-turn']",
       "[data-testid*='message']",
@@ -81,12 +119,20 @@
       document.querySelectorAll(selector).forEach(element => {
         if (seen.has(element) || !isVisible(element)) return;
         seen.add(element);
-        const content = cleanText(element.innerText || element.textContent || "");
+        const role = inferRole(element, platform);
+        let content = cleanText(element.innerText || element.textContent || "");
+        if (isAiMode) content = cleanAiModeContent(role, content);
         const attachments = collectAttachments(attachmentScope(element));
-        if (!isUsefulMessage(content, attachments)) return;
+        // AI Mode elements come from trusted, narrow selectors, so any non-empty
+        // turn is real — bypass the generic min-length gate that would otherwise
+        // drop short queries like "千问 4折".
+        const useful = isAiMode
+          ? (content.length > 0 || attachments.length > 0)
+          : isUsefulMessage(content, attachments);
+        if (!useful) return;
         items.push({
           element,
-          role: inferRole(element, platform),
+          role,
           content,
           attachments,
           selector,
@@ -95,7 +141,42 @@
       });
     });
 
-    return removeContainerDuplicates(items).sort((a, b) => a.order - b.order);
+    const deduped = removeContainerDuplicates(items);
+    // The generic sibling-count score (documentPositionScore) is only
+    // comparable between elements that share the same parent chain. Google AI
+    // Mode mixes two element types living at different DOM depths (the answer
+    // body vs the question bubble), so order by true document position instead.
+    if (isAiMode) {
+      return deduped.sort((a, b) => compareDomOrder(a.element, b.element));
+    }
+    return deduped.sort((a, b) => a.order - b.order);
+  }
+
+  function compareDomOrder(a, b) {
+    if (!a || !b || a === b) return 0;
+    const pos = a.compareDocumentPosition(b);
+    if (pos & Node.DOCUMENT_POSITION_FOLLOWING) return -1;
+    if (pos & Node.DOCUMENT_POSITION_PRECEDING) return 1;
+    return 0;
+  }
+
+  function cleanAiModeContent(role, content) {
+    // The user bubble text is prefixed with a "You said:" marker and suffixed
+    // with a timestamp (e.g. "9:40 pm"). When the user pastes a link, Google
+    // echoes the linked page's title above the real prompt, followed by its own
+    // "You said:" marker — so the actual prompt is whatever follows the marker.
+    if (role !== "user") return content;
+    return content
+      // Echoed link-card title sits on a single line above the real marker;
+      // [^\n]* (not [\s\S]*?) keeps the strip to that one line so a legitimate
+      // multi-line prompt that merely happens to contain "You said:" survives.
+      .replace(/^[^\n]*\nYou said:\s*/i, "")
+      .replace(/^You said:\s*/i, "")
+      // The timestamp is always alone on the final line, so require the leading
+      // newline — otherwise a prompt ending in a time ("…meeting at 9:40 pm")
+      // would be truncated.
+      .replace(/\n\d{1,2}:\d{2}\s*(?:am|pm)\s*$/i, "")
+      .trim();
   }
 
   function attachmentScope(element) {
@@ -188,6 +269,12 @@
   }
 
   function inferRole(element, platform) {
+    if (platform.id === "google-ai-mode") {
+      if (element.matches("[data-subtree='aimc']")) return "assistant";
+      if (/^You said:/.test((element.innerText || "").trim())) return "user";
+      if (element.matches("div.tbIZh")) return "user";
+    }
+
     const directRole = element.getAttribute("data-message-author-role");
     if (directRole) return normalizeRole(directRole);
 

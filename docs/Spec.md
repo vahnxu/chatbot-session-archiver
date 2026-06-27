@@ -207,9 +207,20 @@ Same as `session.savedAttachments` plus a header:
 
 For each match the script computes a wider **attachment scope** (`closest('[data-test-render-count], [data-message-author-role], [data-testid*="conversation-turn"], article')`) so that attachments rendered as siblings of the text bubble (Claude) are still picked up.
 
+#### Google AI Mode (param-gated, not host-gated)
+
+Google AI Mode is served from the normal Search host (`www.google.com`), so it cannot be matched by hostname — that would also swallow ordinary search. `detectPlatform()` therefore checks `isGoogleAiMode()` **before** the host rules: a Google Search host **plus** the AI Mode query param (`udm=50`), with the rendered `[data-subtree="aimc"]` answer container as a secondary signal.
+
+Because the AI conversation lives inside the Search results page, the generic selector list would pull in search chrome ("People also ask", related searches). For `google-ai-mode`, `collectMessageCandidates()` instead uses a dedicated narrow pair (`GOOGLE_AI_MODE_SELECTORS`):
+
+- user turns — `div.tbIZh.wQN2Jd.Odbbif` (the "You said:" bubble; Google-internal utility classes, the fragile part)
+- AI answers — `[data-subtree="aimc"]` (semantic attribute, the stable anchor)
+
+AI Mode also needs three platform-specific adjustments, all keyed on `platform.id === "google-ai-mode"`: turns are ordered by true document position (`compareDocumentPosition`) because the two element types live at different DOM depths; the generic min-length gate is bypassed (the narrow selectors are trusted, so short queries like "千问 4折" survive); and `cleanAiModeContent()` strips the "You said:" marker, the trailing timestamp, and the link-card title Google echoes above a pasted-URL prompt. The title comes from the `q` param, not a page heading.
+
 ### Adding a platform
 
-1. Add the host to `detectPlatform()` in `content.js` and to `platformFolderName()` in `background.js`.
+1. Add the host to `detectPlatform()` in `content.js` and to `platformFolderName()` in `background.js`. If the platform shares a host with a non-chatbot product (like Google Search), gate on a URL param/DOM signal instead of hostname and check it before the host rules.
 2. If the platform exposes message containers via a unique attribute, add a selector to `collectMessageCandidates()`.
 3. If the platform exposes attachments outside the matched container (siblings, sticky header, lightbox), extend `attachmentScope()`.
 4. If role inference is wrong, update `inferRole()` with platform-specific signals.
@@ -220,6 +231,7 @@ For each match the script computes a wider **attachment scope** (`closest('[data
 - Long conversations: messages above the current scroll position may not be in the DOM yet. The user should scroll to the earliest message before saving so the page has loaded the full history.
 - Thinking summaries: some platforms (Claude) render a collapsed-summary line that duplicates the first sentence of the body. `collapseInternalRepeats()` collapses adjacent repeated lines and `removeContainerDuplicates()` drops nested fragments by DOM containment.
 - Pages that expose attachments only as filenames or chips with no fetchable URL/blob: the bundle records the metadata as `kind: "filename"` or `kind: "visible-attachment"` and marks them `skipped`.
+- Google AI Mode locale: the `div.tbIZh` structural selector identifies user turns in any locale, so roles are never misclassified, but the `cleanAiModeContent()` cleanup only recognises the **English** "You said:" marker. In a non-English Search UI the captured user text may retain a localized marker prefix until the regex is extended for that locale. The trailing timestamp strip is am/pm-only and leaves 24-hour clocks in place.
 - Platform-hidden uploads: some chatbot platforms keep uploaded files behind internal APIs and render only a visible file card. The archiver must not pretend to reconstruct those files; it records the platform-visible metadata and the skip reason.
 - DOM is not a stable API. A platform redesign breaks selectors with no warning. Mitigation is fast manual repair, not a contract.
 
