@@ -1,0 +1,43 @@
+schema_version: 1
+
+# ─────────────────────────────────────────────────────────────────────────────
+# chatbot-session-archiver
+# 低频工具仓库
+#
+# 【为什么现在才有这个文件】
+# Governance_Architecture §2 白纸黑字：「所有项目归入 T1 或 T2，不再有 Unmanaged 分类」。
+# 而本 repo 在 2026-07-13 之前**从未被拉进分层体系** —— 没有 governance.yaml，
+# 因此对所有治理检查都是隐形的。这不是「故意不设门禁」，是「从来没人登记过」。
+#
+# 【当前状态：已登记，但无门禁】—— [用户决定 2026-07-13]
+# checks 全部为 false，因为本 repo **当前一个 git 钩子都没装**。
+# 这里诚实声明「无门禁」，而不是写 true 去声明一个根本不生效的门禁 ——
+# 后者正是 2026-07-13 门禁体系审计的核心病症（「声明存在 ≠ 实际生效」，
+# 四个 Claude hook 断链两个月无人知晓）。
+#
+# 【门禁何时铺进来】owner 决定的顺序：
+#   先修好门禁本身（Phase 1：把「扫全局状态」的检查从 pre-commit 搬到每日体检 + 通知；
+#   当前 9 道阻断型门禁只能拦「路过的人」，拦不到闯祸的人）
+#   → 再按 agents → new-api / CLIProxyAPI → substrate 的顺序铺。
+#   理由：现在往生产系统铺，等于把已知有病的门禁复制到最要紧的仓库。
+#   权威源：docs/governance/20260713_Gate_System_Diagnosis_And_Iteration_Plan.md
+#
+# 【谁会盯着这件事】ops/fabric_liveness_audit.sh（= ops/fabric liveness）每日体检，
+# 会把「有 governance.yaml 但无门禁」持续报为 WARN —— 让缺口保持可见，直到被处理。
+# ─────────────────────────────────────────────────────────────────────────────
+
+project: chatbot-session-archiver
+type: minimal
+github: vahnxu/chatbot-session-archiver
+checks:
+  onboarding_gate: false           # 当前无钩子；Phase 1 后按顺序开启 [用户决定 2026-07-13]
+  governance_consistency: false    # 同上
+  autosync_governance: false       # permanent: minimal 项目关闭
+  deploy_runbook: false            # permanent: minimal 项目关闭
+  acceptance_smoke: false          # permanent: minimal 项目关闭
+governance_scripts: []             # 当前无门禁脚本 —— 诚实为空，不虚报
+no_gates_reason: "当前一个 git 钩子都没装；先修好门禁本身(Phase 1)，再按 agents → new-api/CLIProxyAPI → substrate 的顺序铺 [用户决定 2026-07-13]"
+sync:
+  truth_source: github
+  autosync: true                   # ⚠️ 必须是 true：无 governance.yaml 时 autosync 默认就是 true
+                                   #    （hook_git_autosync.sh:229）。写别的值 = 挂牌顺手改了同步行为。
