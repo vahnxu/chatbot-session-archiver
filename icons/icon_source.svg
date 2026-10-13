@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Chatbot Archiver icon">
+  <rect width="128" height="128" rx="28" fill="#1d403e"/>
+  <rect x="20" y="25" width="88" height="62" rx="14" fill="#f4ede0"/>
+  <polygon points="36,87 56,87 41,103" fill="#f4ede0"/>
+  <circle cx="44" cy="56" r="6.5" fill="#1d403e"/>
+  <circle cx="64" cy="56" r="6.5" fill="#1d403e"/>
+  <circle cx="84" cy="56" r="6.5" fill="#1d403e"/>
+</svg>

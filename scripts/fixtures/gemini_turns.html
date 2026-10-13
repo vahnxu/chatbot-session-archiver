@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Fixture handshake chat - Google Gemini</title>
+<style>.cdk-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}</style>
+</head><body><main>
+<!-- Synthetic Gemini thread shaped after the 2026-10 DOM: one
+     div.conversation-container per exchange holding <user-query> and
+     <model-response>. The container's class contains "message", which is what
+     made the generic selector swallow each exchange as one role-less message.
+     Also includes the hidden "Conversation with Gemini" h1, the hidden
+     "You said" label, the visible "Gemini said" label, inline source chips,
+     and two identical short prompts that are two real turns. The chip uses
+     display:block spans, not divs: a <div> inside <p> makes the HTML parser
+     close the <p> and leave the chip empty (the live DOM is built by script,
+     so it has no such restriction). Exchange c4 is content-visibility:hidden,
+     standing in for Gemini turns scrolled out of view that the browser has
+     not laid out: their innerText has no line breaks. It also carries a
+     screen-reader-only label and a display:none span, which a DOM walk must
+     skip the way innerText does. -->
+<h1 class="cdk-visually-hidden">Conversation with Gemini</h1>
+<div id="chat-history">
+<div id="c1" class="conversation-container message-actions-hover-boundary">
+  <user-query><div class="query-text"><h5 class="cdk-visually-hidden">You said</h5>
+    <p class="query-text-line">Explain the fixture handshake</p><p class="query-text-line">in two lines</p></div></user-query>
+  <model-response><div>Gemini said</div><message-content><div class="markdown">
+    <p>Fixture reply one opens with a SYN.<sources-carousel-inline><source-inline-chip><span style="display:block">Coursera</span><span style="display:block">+ 1</span></source-inline-chip></sources-carousel-inline></p>
+    <p>Second line of reply one.</p></div></message-content>
+    <div class="actions">Copy</div></model-response>
+</div>
+<div id="c4" class="conversation-container message-actions-hover-boundary" style="content-visibility:hidden">
+  <user-query><div class="query-text"><p class="query-text-line">offscreen turn</p></div></user-query>
+  <model-response><message-content><div class="markdown"><h3>Offscreen heading</h3><span class="a11y-label" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">1.Offscreen heading:hidden label.</span><span style="display:none">never shown</span><p>Offscreen paragraph.</p><ol><li><p>first step</p></li><li><p>second step</p></li></ol><pre><code>def f():
+    return 1</code></pre></div></message-content></model-response>
+</div>
+<div id="c2" class="conversation-container message-actions-hover-boundary">
+  <user-query><div class="query-text"><p class="query-text-line">again</p></div></user-query>
+  <model-response><message-content><div class="markdown"><p>Fixture reply two.</p></div></message-content></model-response>
+</div>
+<div id="c3" class="conversation-container message-actions-hover-boundary">
+  <user-query><div class="query-text"><p class="query-text-line">again</p></div></user-query>
+  <model-response><message-content><div class="markdown"><p>Fixture reply three.</p></div></message-content></model-response>
+</div>
+</div>
+</main></body></html>

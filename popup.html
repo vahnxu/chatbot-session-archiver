@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chatbot Archiver</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <h1>Chatbot Archiver</h1>
+        <p id="pageStatus">Checking current tab...</p>
+      </div>
+      <span class="badge">Local</span>
+    </header>
+
+    <section class="panel">
+      <dl>
+        <div>
+          <dt>Platform</dt>
+          <dd id="platformName">Unknown</dd>
+        </div>
+        <div>
+          <dt>Output</dt>
+          <dd>Session bundle</dd>
+        </div>
+        <div>
+          <dt>Network</dt>
+          <dd>Page attachments</dd>
+        </div>
+      </dl>
+    </section>
+
+    <button id="saveButton" class="primary" type="button">Save Current Session</button>
+
+    <p class="hint">
+      Toolbar clicks save directly. This page is kept for self-test only.
+    </p>
+
+    <pre id="log" aria-live="polite"></pre>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

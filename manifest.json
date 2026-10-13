@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Local Chatbot Session Archiver",
+  "version": "0.1.0",
+  "description": "Manually export the current AI chatbot session and exposed attachments to a local folder.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyotC+oF1hXvjwdq4VYeweaHotyOpuK1aX8E0VUP2gnEh6/jlYt4XrgptE3x4cbibMfsqkLQCMazL/qRp/8Wl45srTvisMRkjExgAP1EEfhJ77jUkHJgbFbX3QUL5ijgsOlEZaQ9i7J3dzkEqpZt6W9gfETjoBA+/awfEuv+NkUIZJF3S1WpW5A6Ofrxnz5XkUH2bX3RzV+rGSXemLJOMxYRxos3Fk14PRR+7cFxnP46VW5vsaVPoPfXbamawZMsDpVgtOnYj+y6hgmIFT7WBJT+lHjkYZqob1fhO2y5wi/CPdgrnXDvpzyf+dZCFbDJXyNVcJo33r0r69Uuv1gIUCwIDAQAB",
+  "action": {
+    "default_title": "Save chatbot session"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "popup.html",
+  "permissions": [
+    "activeTab",
+    "nativeMessaging",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

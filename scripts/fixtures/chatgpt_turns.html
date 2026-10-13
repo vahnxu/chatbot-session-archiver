@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Fixture chat - ChatGPT</title>
+<style>.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}</style>
+</head><body><main>
+<!-- Synthetic ChatGPT thread shaped after the 2026-10 DOM: one
+     <section data-turn data-testid="conversation-turn-N"> per turn.
+     It deliberately includes the shapes that made assistant turns vanish:
+     role-tagged bodies inside display:contents wrappers, an assistant turn
+     with no data-message-author-role at all, per-turn chrome text, and two
+     identical short user prompts that are two real turns. -->
+<div class="thread">
+<section data-turn="user" data-turn-id="u1" data-testid="conversation-turn-1">
+  <h4 class="sr-only">You said:</h4>
+  <div data-message-author-role="user" class="min-h-8 text-message"><div class="whitespace-pre-wrap">How do fixture transfers work between two accounts?</div></div>
+</section>
+<section data-turn="assistant" data-turn-id="a1" data-testid="conversation-turn-2">
+  <h4 class="sr-only">ChatGPT said:</h4>
+  <div class="worked">Worked for 11s</div>
+  <div style="display:contents" data-streaming-response-group="">
+    <div style="display:contents" data-message-author-role="assistant" data-message-id="a1m">
+      <div class="markdown"><p>Fixture answer one: transfers between the two accounts settle in seconds.</p><p>Second paragraph of answer one.</p></div>
+    </div>
+  </div>
+</section>
+<section data-turn="user" data-turn-id="u2" data-testid="conversation-turn-3">
+  <div data-message-author-role="user"><div class="whitespace-pre-wrap">look again</div></div>
+</section>
+<section data-turn="assistant" data-turn-id="a2" data-testid="conversation-turn-4">
+  <div class="agent-turn"><div class="markdown"><p>Fixture answer two has no role attribute on its body at all.</p></div></div>
+</section>
+<section data-turn="user" data-turn-id="u3" data-testid="conversation-turn-5">
+  <div data-message-author-role="user"><div class="whitespace-pre-wrap">look again</div></div>
+</section>
+<section data-turn="assistant" data-turn-id="a3" data-testid="conversation-turn-6">
+  <div data-message-author-role="assistant"><div class="markdown"><p>Fixture answer three, an ordinary visible body.</p></div></div>
+  <div class="sources">Sources</div>
+</section>
+</div>
+</main></body></html>
